@@ -1,0 +1,27 @@
+{
+    "entries": [
+        {
+            "name": "FAV_ICON",
+            "type": "Image",
+            "filename": "favicon.ico"
+        },
+        {
+            "name": "TEX_DISC",
+            "type": "Image",
+            "description": "Disc used as bill board to render points.",
+            "filename": "disc.png"
+        },
+        {
+            "name": "SPACE_PAN",
+            "type": "Image",
+            "description": "Panorama of space in equirectangular projection.",
+            "filename": "space-panorama-hi.jpg"
+        },
+        {
+            "name": "WORLD_MAP",
+            "type": "Image",
+            "description": "Satellite image of world map in equirectangular projection.",
+            "filename": "world-med-2e11.jpg"
+        }
+    ]
+}

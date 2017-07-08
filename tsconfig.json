@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "target": "es5",
+        "lib": [
+            "es6", "dom"
+        ],
+        "module": "commonjs"
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

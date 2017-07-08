@@ -1,0 +1,6 @@
+/node_modules/*
+/dist/*
+/typings/*
+/assets_raw/*
+/assets/*
+!/assets/resources.json
