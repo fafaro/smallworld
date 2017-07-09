@@ -22,6 +22,18 @@
             "type": "Image",
             "description": "Satellite image of world map in equirectangular projection.",
             "filename": "world-med-2e11.jpg"
+        },
+        {
+            "name": "PLANE_TOP",
+            "type": "Image",
+            "description": "Top view of airplane for use as billboard.",
+            "filename": "plane-top.png"
+        },
+        {
+            "name": "SPARKLE",
+            "type": "Image",
+            "description": "Sparkle billboard with transparency.",
+            "filename": "sparkle-trans.png"
         }
     ]
 }

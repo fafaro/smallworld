@@ -203,6 +203,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 
 	this.zoomCamera = function () {
+		//if (_state !== STATE.NONE) console.log({"_state":_state});
 
 		var factor;
 
@@ -211,6 +212,12 @@ THREE.TrackballControls = function ( object, domElement ) {
 			factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
 			_touchZoomDistanceStart = _touchZoomDistanceEnd;
 			_eye.multiplyScalar( factor );
+			// console.log({
+			// 	"factor": factor, 
+			// 	"_touchZoomDistanceStart": _touchZoomDistanceStart,
+			// 	"_touchZoomDistanceEnd": _touchZoomDistanceEnd,
+			// 	"_eye": _eye,
+			// });
 
 		} else {
 
@@ -231,6 +238,13 @@ THREE.TrackballControls = function ( object, domElement ) {
 				_zoomStart.y += ( _zoomEnd.y - _zoomStart.y ) * this.dynamicDampingFactor;
 
 			}
+
+			// if (_state !== STATE.NONE) console.log({
+			// 	_zoomStart: _zoomStart,
+			// 	_zoomEnd: _zoomEnd,
+			// 	factor: factor,
+			// 	_eye: _eye,
+			// });
 
 		}
 

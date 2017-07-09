@@ -5,7 +5,8 @@
         "lib": [
             "es6", "dom"
         ],
-        "module": "commonjs"
+        "module": "commonjs",
+        "allowUnreachableCode": true
     },
     "exclude": [
         "node_modules"
