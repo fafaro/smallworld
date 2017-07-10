@@ -1,20 +1,24 @@
+//require('bootstrap/solarized/bootstrap.min.css');
+require('bootstrap/dist/css/bootstrap.css');
+require('bootstrap/dist/css/bootstrap-theme.css');
+require('jquery');
+require('bootstrap');
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as THREE from 'three';
 import * as Detector from './GLDetector.js';
 import loadColladaLoader from './ColladaLoader.js';
 import * as loadTrackball from './TrackballControls.js';
-import { fetchAirplaneData, AirplaneData } from './flightapi';
+import { fetchAirplaneData, fetchLocalAirplaneData, AirplaneData } from './flightapi';
 import { SHOW_AXIS, FILE_PATHS, EARTH_BRIGHTNESS } from './consts';
 import { PlaneManager } from './planebb';
+import SearchComponent2 from './SearchComponent';
 
 let camera: THREE.PerspectiveCamera = null;
 let renderer: THREE.WebGLRenderer = null;
 
 window['THREE'] = THREE;
 let adata: AirplaneData = null;
-
-
 let planeMgr: PlaneManager = null;
 
 function main() {
@@ -40,8 +44,8 @@ function main() {
     console.log(`Max texture size: ${maxTexSize}`);
 
     loadTrackball( THREE );
-    let controls = new THREE.TrackballControls( camera );
-    controls.rotateSpeed = 2.0;
+    let controls = new THREE.TrackballControls( camera, renderer.domElement );
+    controls.rotateSpeed = 0.25;
     controls.zoomSpeed = 1.2;
     controls.panSpeed = 0.8;
     controls.noZoom = false;
@@ -51,7 +55,14 @@ function main() {
     controls.dynamicDampingFactor = 0.3;
     controls.keys = [ 65, 83, 68 ];
     controls.maxDistance = 20;
-    controls.minDistance = 1.01;
+    controls.minDistance = 1.05;
+    controls.addEventListener("change", evt => {
+        //console.log(camera.position.z)
+        controls.rotateSpeed = Math.min(camera.position.length() - 1, 2);
+        controls.zoomSpeed = controls.rotateSpeed;
+        //console.log(controls.rotateSpeed);
+    });
+
     //controls.zoomCamera
 
     let geometry = new THREE.SphereGeometry( 1, 64, 64 );
@@ -65,7 +76,7 @@ function main() {
     material.map = texture;
     material.color.setScalar( EARTH_BRIGHTNESS );
 
-    camera.position.z = 5;
+    camera.position.z = 10;
     camera.zoom = 4;
     camera.updateProjectionMatrix();
 
@@ -94,10 +105,74 @@ function main() {
     loadTrackball(THREE);
     window['THREE'] = THREE;
 
+    function animate() {
+        window.requestAnimationFrame( animate );
+        //cube.rotation.x += 0.01;
+        //cube.rotation.y += 0.01;
 
+        controls.update();
+        planeMgr.update( camera );
+        let {x:cx,y:cy,z:cz} = camera.position;
+        directionalLight.position.set( cx, cy, cz );
+        renderer.render( scene, camera );
+    }
+    animate();
+
+    let btn = document.createElement('button');
+    btn.innerHTML = 'Fullscreen';
+    btn.addEventListener('click', () => {
+        //window.alert('Woot')
+        renderer.domElement.webkitRequestFullscreen();
+        //THREE.T
+    });
+    document.body.appendChild(btn);
+
+    let root = document.createElement('div');
+    document.body.appendChild(root);
+    let sc: SearchComponent2 = null;
+    let renderUI = () => {
+        let buttonStyle: React.CSSProperties = {
+            position: "fixed",
+            width: "40px",
+            height: "40px",
+            right: "10px",
+            top: "10px",
+            color: "white",
+            textAlign: "right",
+            verticalAlign: "center",
+        };
+        let creditStyle: React.CSSProperties = {
+            fontSize: '8pt',
+            position: "fixed",
+            width: "200px",
+            height: "20px",
+            right: "10px",
+            bottom: "10px",
+            color: "white",
+            opacity: 0.5,
+            textAlign: "right",
+            verticalAlign: "center",
+        };
+
+        const onSelect = (id) => {
+            let pos = planeMgr.getPosition(id);
+            pos.multiplyScalar(1.1);
+            console.log(pos);
+            camera.position.set(pos.x, pos.y, pos.z);
+            camera.updateProjectionMatrix();
+        };
+
+        ReactDOM.render(
+            <div>
+                <div style={buttonStyle} onClick={()=>sc.show()}><span className="glyphicon glyphicon-search"/></div>
+                <div style={creditStyle}>Data courtesy OpenSkyNetwork</div>
+                <SearchComponent2 ref={r=>sc=r} data={adata} onSelection={onSelect}/>
+            </div>, root);
+    }
 
     fetchAirplaneData().then( data => { 
         adata = data;
+        renderUI();
         console.log(["Data loaded", adata]);
 
         for (let i = 0; i < adata.length; i++) { 
@@ -126,28 +201,6 @@ function main() {
         //     console.log("vertices updated");
         // }, 30);
     });
-
-    function animate() {
-        window.requestAnimationFrame( animate );
-        //cube.rotation.x += 0.01;
-        //cube.rotation.y += 0.01;
-
-        controls.update();
-        planeMgr.update( camera );
-        let {x:cx,y:cy,z:cz} = camera.position;
-        directionalLight.position.set( cx, cy, cz );
-        renderer.render( scene, camera );
-    }
-    animate();
-
-    let btn = document.createElement('button');
-    btn.innerHTML = 'Fullscreen';
-    btn.addEventListener('click', () => {
-        //window.alert('Woot')
-        renderer.domElement.webkitRequestFullscreen();
-        //THREE.T
-    });
-    document.body.appendChild(btn);
 
     window.addEventListener( 'resize', onWindowResize, false );
     window.addEventListener( 'keypress', evt => {

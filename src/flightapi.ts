@@ -61,3 +61,11 @@ export async function fetchAirplaneData() {
         });
     });
 }
+
+export async function fetchLocalAirplaneData() {
+    return new Promise<AirplaneData>(function (resolve, reject) {
+        $.getJSON("assets/sample-flight-data.json", data => {
+            resolve(new AirplaneData(data));
+        });
+    });
+}

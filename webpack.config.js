@@ -1,19 +1,28 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     context: path.resolve(__dirname, "src"),
-    entry: './index.tsx',
+    entry: {
+        index: './index.tsx',
+        index2: './index2.tsx',
+    },
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: 'bundle.js'
+        filename: 'bundle.[name].js'
     },
     resolve: {
         extensions: ['.js', '.jsx', '.ts', '.tsx']
     },
     module: {
         rules: [
-            { test: /\.tsx?$/, use: 'ts-loader' }
+            { test: /\.tsx?$/, use: 'ts-loader' },
+            { test: /\.css$/, loader: 'style-loader!css-loader' },
+            {
+              test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
+              loader: 'file-loader'
+            },
         ]
     },
     devServer: {
@@ -27,6 +36,10 @@ module.exports = {
             { from: '*.html' },
             { from: '*.ico' },
             { from: '../assets/*', to: 'assets/[name].[ext]'}
-        ])
+        ]),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery'
+        }),
     ]
 };

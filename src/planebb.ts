@@ -46,6 +46,7 @@ export class PlaneManager {
 
         let mesh = new THREE.Mesh( this._geometry, this._material );
         mesh.matrixAutoUpdate = false;
+        mesh.visible = false;
         let m = mesh.matrix;
         m.identity();
         m.multiplyMatrices(new THREE.Matrix4().makeRotationY(Math.PI / 2), m);
@@ -62,6 +63,12 @@ export class PlaneManager {
 
     hide(index: number) {
 
+    }
+
+    getPosition(index: number) {
+        let m = this._planes.get(index).mesh.matrix;
+        let pos = new THREE.Vector3(m.elements[12], m.elements[13], m.elements[14]);
+        return pos;
     }
 
     private _oldMatrix: THREE.Matrix4 = null;
